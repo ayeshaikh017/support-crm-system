@@ -38,6 +38,22 @@ function TicketList() {
     fetchTickets();
   }, [search, status]);
 
+  const getStatusBadge = (ticketStatus) => {
+  if (ticketStatus === "Open") {
+    return "badge bg-primary";
+  }
+
+  if (ticketStatus === "In Progress") {
+    return "badge bg-warning text-dark";
+  }
+
+  if (ticketStatus === "Closed") {
+    return "badge bg-success";
+  }
+
+  return "badge bg-secondary";
+};
+
   return (
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -132,9 +148,9 @@ function TicketList() {
                       <td>{ticket.subject}</td>
 
                       <td>
-                        <span className="badge bg-secondary">
-                          {ticket.status}
-                        </span>
+                       <span className={getStatusBadge(ticket.status)}>
+                        {ticket.status}
+                          </span>
                       </td>
 
                       <td>
