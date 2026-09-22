@@ -26,7 +26,7 @@ router.post("/tickets", async (req, res) => {
 
     const ticketCount = await Ticket.countDocuments();
 
-    const ticket_id = `TKT-${String(ticketCount + 1).padStart(3, "0")}`;
+    const ticket_id = `TKT-${Date.now()}`;
 
     const ticket = await Ticket.create({
       ticket_id,
