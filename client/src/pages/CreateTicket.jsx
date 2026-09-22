@@ -1,4 +1,28 @@
+import { useState } from "react";
+
 function CreateTicket() {
+  const [formData, setFormData] = useState({
+    customer_name: "",
+    customer_email: "",
+    subject: "",
+    description: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    console.log("Ticket Data:", formData);
+  };
+
   return (
     <div className="container py-4">
       <div className="row justify-content-center">
@@ -12,30 +36,38 @@ function CreateTicket() {
 
           <div className="card shadow-sm">
             <div className="card-body p-4">
-              <form>
+              <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label htmlFor="customerName" className="form-label">
+                  <label htmlFor="customer_name" className="form-label">
                     Customer Name
                   </label>
 
                   <input
                     type="text"
-                    id="customerName"
+                    id="customer_name"
+                    name="customer_name"
                     className="form-control"
                     placeholder="Enter customer name"
+                    value={formData.customer_name}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="customerEmail" className="form-label">
+                  <label htmlFor="customer_email" className="form-label">
                     Customer Email
                   </label>
 
                   <input
                     type="email"
-                    id="customerEmail"
+                    id="customer_email"
+                    name="customer_email"
                     className="form-control"
                     placeholder="Enter customer email"
+                    value={formData.customer_email}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
 
@@ -47,8 +79,12 @@ function CreateTicket() {
                   <input
                     type="text"
                     id="subject"
+                    name="subject"
                     className="form-control"
                     placeholder="Enter issue title"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
 
@@ -59,20 +95,17 @@ function CreateTicket() {
 
                   <textarea
                     id="description"
+                    name="description"
                     className="form-control"
                     rows="5"
                     placeholder="Describe the customer's issue"
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
                   ></textarea>
                 </div>
 
-                <div className="d-flex justify-content-end gap-2">
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                  >
-                    Cancel
-                  </button>
-
+                <div className="d-flex justify-content-end">
                   <button type="submit" className="btn btn-primary">
                     Create Ticket
                   </button>
