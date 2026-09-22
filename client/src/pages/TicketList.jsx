@@ -1,20 +1,42 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import api from "../services/api";
+
 function TicketList() {
-  const tickets = [
-    {
-      ticket_id: "TKT-001",
-      customer_name: "Rahul Sharma",
-      subject: "Unable to login",
-      status: "Open",
-      created_at: "Sep 22, 2026",
-    },
-    {
-      ticket_id: "TKT-002",
-      customer_name: "Priya Mehta",
-      subject: "Payment failed",
-      status: "In Progress",
-      created_at: "Sep 22, 2026",
-    },
-  ];
+  const [tickets, setTickets] = useState([]);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const fetchTickets = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await api.get("/tickets", {
+        params: {
+          search,
+          status,
+        },
+      });
+
+      setTickets(response.data);
+    } catch (error) {
+      console.error("Fetch tickets error:", error);
+
+      setError(
+        error.response?.data?.message ||
+          "Failed to load tickets."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTickets();
+  }, [search, status]);
 
   return (
     <div className="container py-4">
@@ -26,9 +48,12 @@ function TicketList() {
           </p>
         </div>
 
-        <button className="btn btn-primary">
+        <Link
+          to="/create-ticket"
+          className="btn btn-primary"
+        >
           + Create Ticket
-        </button>
+        </Link>
       </div>
 
       <div className="card shadow-sm">
@@ -38,12 +63,18 @@ function TicketList() {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search tickets..."
+                placeholder="Search by ID, name, email, subject or description..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
               />
             </div>
 
             <div className="col-md-4">
-              <select className="form-select">
+              <select
+                className="form-select"
+                value={status}
+                onChange={(event) => setStatus(event.target.value)}
+              >
                 <option value="">All Statuses</option>
                 <option value="Open">Open</option>
                 <option value="In Progress">In Progress</option>
@@ -52,31 +83,71 @@ function TicketList() {
             </div>
           </div>
 
-          <div className="table-responsive">
-            <table className="table table-hover align-middle">
-              <thead className="table-light">
-                <tr>
-                  <th>Ticket ID</th>
-                  <th>Customer</th>
-                  <th>Issue</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
+          {error && (
+            <div className="alert alert-danger">
+              {error}
+            </div>
+          )}
 
-              <tbody>
-                {tickets.map((ticket) => (
-                  <tr key={ticket.ticket_id}>
-                    <td>{ticket.ticket_id}</td>
-                    <td>{ticket.customer_name}</td>
-                    <td>{ticket.subject}</td>
-                    <td>{ticket.status}</td>
-                    <td>{ticket.created_at}</td>
+          {loading ? (
+            <div className="text-center py-4">
+              Loading tickets...
+            </div>
+          ) : tickets.length === 0 ? (
+            <div className="text-center text-muted py-4">
+              No tickets found.
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table table-hover align-middle">
+                <thead className="table-light">
+                  <tr>
+                    <th>Ticket ID</th>
+                    <th>Customer</th>
+                    <th>Issue</th>
+                    <th>Status</th>
+                    <th>Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+
+                <tbody>
+                  {tickets.map((ticket) => (
+                    <tr key={ticket.ticket_id}>
+                      <td>
+                        <Link
+                          to={`/tickets/${ticket.ticket_id}`}
+                          className="fw-semibold"
+                        >
+                          {ticket.ticket_id}
+                        </Link>
+                      </td>
+
+                      <td>
+                        <div>{ticket.customer_name}</div>
+                        <small className="text-muted">
+                          {ticket.customer_email}
+                        </small>
+                      </td>
+
+                      <td>{ticket.subject}</td>
+
+                      <td>
+                        <span className="badge bg-secondary">
+                          {ticket.status}
+                        </span>
+                      </td>
+
+                      <td>
+                        {new Date(
+                          ticket.created_at
+                        ).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>
