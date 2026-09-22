@@ -8,7 +8,13 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+const allowedOrigin = process.env.CLIENT_URL || "http://localhost:5173";
+
+app.use(
+  cors({
+    origin: allowedOrigin,
+  })
+);
 app.use(express.json());
 app.use("/api", ticketRoutes);
 
