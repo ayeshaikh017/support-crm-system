@@ -110,4 +110,41 @@ router.get("/tickets/:ticket_id", async (req, res) => {
     });
   }
 });
+router.put("/tickets/:ticket_id", async (req, res) => {
+  try {
+    const { ticket_id } = req.params;
+    const { status, notes } = req.body;
+
+    const ticket = await Ticket.findOne({ ticket_id });
+
+    if (!ticket) {
+      return res.status(404).json({
+        message: "Ticket not found",
+      });
+    }
+
+    if (status) {
+      ticket.status = status;
+      await ticket.save();
+    }
+
+    if (notes) {
+      await Note.create({
+        ticket_id,
+        note_text: notes,
+      });
+    }
+
+    res.json({
+      success: true,
+      updated_at: ticket.updated_at,
+    });
+  } catch (error) {
+    console.error("Update ticket error:", error);
+
+    res.status(500).json({
+      message: "Failed to update ticket",
+    });
+  }
+});
 module.exports = router;
