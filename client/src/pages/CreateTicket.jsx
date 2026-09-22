@@ -1,12 +1,19 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 function CreateTicket() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     customer_name: "",
     customer_email: "",
     subject: "",
     description: "",
   });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -17,10 +24,28 @@ function CreateTicket() {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    console.log("Ticket Data:", formData);
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await api.post("/tickets", formData);
+
+      console.log("Ticket created:", response.data);
+
+      navigate("/");
+    } catch (error) {
+      console.error("Create ticket error:", error);
+
+      setError(
+        error.response?.data?.message ||
+          "Failed to create ticket. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,9 +61,18 @@ function CreateTicket() {
 
           <div className="card shadow-sm">
             <div className="card-body p-4">
+              {error && (
+                <div className="alert alert-danger">
+                  {error}
+                </div>
+              )}
+
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label htmlFor="customer_name" className="form-label">
+                  <label
+                    htmlFor="customer_name"
+                    className="form-label"
+                  >
                     Customer Name
                   </label>
 
@@ -55,7 +89,10 @@ function CreateTicket() {
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="customer_email" className="form-label">
+                  <label
+                    htmlFor="customer_email"
+                    className="form-label"
+                  >
                     Customer Email
                   </label>
 
@@ -72,7 +109,10 @@ function CreateTicket() {
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="subject" className="form-label">
+                  <label
+                    htmlFor="subject"
+                    className="form-label"
+                  >
                     Issue Title
                   </label>
 
@@ -89,7 +129,10 @@ function CreateTicket() {
                 </div>
 
                 <div className="mb-4">
-                  <label htmlFor="description" className="form-label">
+                  <label
+                    htmlFor="description"
+                    className="form-label"
+                  >
                     Issue Description
                   </label>
 
@@ -106,8 +149,12 @@ function CreateTicket() {
                 </div>
 
                 <div className="d-flex justify-content-end">
-                  <button type="submit" className="btn btn-primary">
-                    Create Ticket
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={loading}
+                  >
+                    {loading ? "Creating..." : "Create Ticket"}
                   </button>
                 </div>
               </form>
