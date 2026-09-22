@@ -1,7 +1,9 @@
 import { Routes, Route } from "react-router-dom";
-
+import Navbar from "./components/Navbar";
 function App() {
   return (
+    <>
+    <Navbar />
     <Routes>
       <Route
         path="/"
@@ -18,6 +20,8 @@ function App() {
         element={<h1 className="text-center mt-5">Ticket Details</h1>}
       />
     </Routes>
+    </>
+    
   );
 }
 
