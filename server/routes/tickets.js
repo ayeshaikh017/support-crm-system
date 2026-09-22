@@ -1,5 +1,6 @@
 const express = require("express");
 const Ticket = require("../models/Ticket");
+const Note = require("../models/Note");
 
 const router = express.Router();
 
@@ -81,5 +82,32 @@ router.get("/tickets", async (req, res) => {
     });
   }
 });
+router.get("/tickets/:ticket_id", async (req, res) => {
+  try {
+    const { ticket_id } = req.params;
 
+    const ticket = await Ticket.findOne({ ticket_id });
+
+    if (!ticket) {
+      return res.status(404).json({
+        message: "Ticket not found",
+      });
+    }
+
+    const notes = await Note.find({ ticket_id }).sort({
+      created_at: -1,
+    });
+
+    res.json({
+      ticket,
+      notes,
+    });
+  } catch (error) {
+    console.error("Get ticket details error:", error);
+
+    res.status(500).json({
+      message: "Failed to fetch ticket details",
+    });
+  }
+});
 module.exports = router;
