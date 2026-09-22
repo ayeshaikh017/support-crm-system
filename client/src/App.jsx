@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import TicketList from "./pages/TicketList";
 function App() {
   return (
     <>
@@ -7,7 +8,7 @@ function App() {
     <Routes>
       <Route
         path="/"
-        element={<h1 className="text-center mt-5">Support CRM Home</h1>}
+        element={<TicketList />}
       />
 
       <Route
