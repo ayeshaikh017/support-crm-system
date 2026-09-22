@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import TicketList from "./pages/TicketList";
+import CreateTicket from "./pages/CreateTicket";
 function App() {
   return (
     <>
@@ -13,7 +14,7 @@ function App() {
 
       <Route
         path="/create-ticket"
-        element={<h1 className="text-center mt-5">Create Ticket</h1>}
+        element={<CreateTicket />}
       />
 
       <Route
