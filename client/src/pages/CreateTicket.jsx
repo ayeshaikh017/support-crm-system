@@ -27,11 +27,37 @@ function CreateTicket() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    setLoading(true);
     setError("");
 
+    if (!formData.customer_name.trim()) {
+      setError("Customer name is required.");
+      return;
+    }
+
+    if (!formData.customer_email.trim()) {
+      setError("Customer email is required.");
+      return;
+    }
+
+    if (!formData.subject.trim()) {
+      setError("Issue title is required.");
+      return;
+    }
+
+    if (!formData.description.trim()) {
+      setError("Issue description is required.");
+      return;
+    }
+
     try {
-      const response = await api.post("/tickets", formData);
+      setLoading(true);
+
+      const response = await api.post("/tickets", {
+        customer_name: formData.customer_name.trim(),
+        customer_email: formData.customer_email.trim(),
+        subject: formData.subject.trim(),
+        description: formData.description.trim(),
+      });
 
       console.log("Ticket created:", response.data);
 
@@ -41,13 +67,12 @@ function CreateTicket() {
 
       setError(
         error.response?.data?.message ||
-          "Failed to create ticket. Please try again."
+        "Failed to create ticket. Please try again."
       );
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <div className="container py-4">
       <div className="row justify-content-center">
@@ -104,6 +129,7 @@ function CreateTicket() {
                     placeholder="Enter customer email"
                     value={formData.customer_email}
                     onChange={handleChange}
+                    pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"
                     required
                   />
                 </div>
