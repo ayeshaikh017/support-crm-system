@@ -10,10 +10,11 @@ Express + MongoDB REST API, deployed as two separate services on Render.
 ---
 
 ## Live Demo
-## 🎥 Demo
 
-![](https://github.com/user-attachments/assets/eb93d77f-f252-4755-854d-471b7f0b85cb)
-| **URL** |https://github.com/user-attachments/assets/eb93d77f-f252-4755-854d-471b7f0b85cb |
+
+https://github.com/user-attachments/assets/eb93d77f-f252-4755-854d-471b7f0b85cb
+
+
 | **Frontend** | https://support-crm-system-1-urq3.onrender.com |
 | **API** | https://support-crm-system-qrm6.onrender.com/api |
 | **API health check** | https://support-crm-system-qrm6.onrender.com/api/health |
