@@ -4,6 +4,9 @@ const Note = require("../models/Note");
 
 const router = express.Router();
 
+// Search text is user input, so match it as plain text, not as a regex pattern.
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 router.post("/tickets", async (req, res) => {
   try {
     const {
@@ -23,8 +26,6 @@ router.post("/tickets", async (req, res) => {
         message: "All fields are required",
       });
     }
-
-    const ticketCount = await Ticket.countDocuments();
 
     const ticket_id = `TKT-${Date.now()}`;
 
@@ -60,13 +61,18 @@ router.get("/tickets", async (req, res) => {
     }
 
     if (search) {
-      filter.$or = [
-        { ticket_id: { $regex: search, $options: "i" } },
-        { customer_name: { $regex: search, $options: "i" } },
-        { customer_email: { $regex: search, $options: "i" } },
-        { subject: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
-      ];
+      // Limit the length before escaping, so the cut can never split an escape.
+      const term = escapeRegex(String(search).trim().slice(0, 100));
+
+      if (term) {
+        filter.$or = [
+          { ticket_id: { $regex: term, $options: "i" } },
+          { customer_name: { $regex: term, $options: "i" } },
+          { customer_email: { $regex: term, $options: "i" } },
+          { subject: { $regex: term, $options: "i" } },
+          { description: { $regex: term, $options: "i" } },
+        ];
+      }
     }
 
     const tickets = await Ticket.find(filter).sort({
