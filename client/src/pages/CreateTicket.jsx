@@ -52,14 +52,12 @@ function CreateTicket() {
     try {
       setLoading(true);
 
-      const response = await api.post("/tickets", {
+      await api.post("/tickets", {
         customer_name: formData.customer_name.trim(),
         customer_email: formData.customer_email.trim(),
         subject: formData.subject.trim(),
         description: formData.description.trim(),
       });
-
-      console.log("Ticket created:", response.data);
 
       navigate("/");
     } catch (error) {

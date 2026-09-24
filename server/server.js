@@ -8,12 +8,15 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 
-const allowedOrigin = process.env.CLIENT_URL || "http://localhost:5173";
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://support-crm-system-1-urq3.onrender.com",
+];
 
 app.use(
   cors({
-    origin: allowedOrigin,
-  })
+    origin: allowedOrigins,
+  }),
 );
 app.use(express.json());
 app.use("/api", ticketRoutes);
